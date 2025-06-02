@@ -8,7 +8,7 @@
  * - Provides an AI proxy endpoint (/api/ask-ai) using Groq SDK
  * - Implements Products CRUD, Comments, Profile, Password Change, Login, Register
  * - Stores product images as Base64 data URIs in MongoDB (no disk writes)
- * - Dynamic PORT via process.env.PORT or default 3000
+ * - Listens on 0.0.0.0 and uses a dynamic PORT via process.env.PORT or default 3000
  * 
  * To run locally:
  * 1) Copy .env.example → .env, fill in MONGODB_URI and GROQ_API_KEY
@@ -50,8 +50,8 @@ if (!GROQ_API_KEY) {
 // ────────────────────────────────────────────────────────────────────────────────
 let cachedClient = null;
 async function connectToDatabase() {
-  if (cachedClient && cachedClient.isConnected()) {
-    return cachedClient.db(); // return the same DB instance
+  if (cachedClient && cachedClient.isConnected && cachedClient.isConnected()) {
+    return cachedClient.db();
   }
   const client = new MongoClient(MONGODB_URI, {
     useNewUrlParser: true,
@@ -139,16 +139,16 @@ const profileUpload = multer({
 // ────────────────────────────────────────────────────────────────────────────────
 // 6) Routes for serving HTML pages (unchanged from before)
 // ────────────────────────────────────────────────────────────────────────────────
-app.get('/',       (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
-app.get('/login',  (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
-app.get('/register', (req, res) => res.sendFile(path.join(__dirname, 'register.html')));
-app.get('/profile',  (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
-app.get('/cart',     (req, res) => res.sendFile(path.join(__dirname, 'cart.html')));
-app.get('/wishlist', (req, res) => res.sendFile(path.join(__dirname, 'wishlist.html')));
-app.get('/checkout', (req, res) => res.sendFile(path.join(__dirname, 'checkout.html')));
-app.get('/about',    (req, res) => res.sendFile(path.join(__dirname, 'about.html')));
-app.get('/order',    (req, res) => res.sendFile(path.join(__dirname, 'order.html')));
-app.get('/security', (req, res) => res.sendFile(path.join(__dirname, 'security.html')));
+app.get('/',        (req, res) => res.sendFile(path.join(__dirname, 'index.html')));
+app.get('/login',   (req, res) => res.sendFile(path.join(__dirname, 'login.html')));
+app.get('/register',(req, res) => res.sendFile(path.join(__dirname, 'register.html')));
+app.get('/profile', (req, res) => res.sendFile(path.join(__dirname, 'profile.html')));
+app.get('/cart',    (req, res) => res.sendFile(path.join(__dirname, 'cart.html')));
+app.get('/wishlist',(req, res) => res.sendFile(path.join(__dirname, 'wishlist.html')));
+app.get('/checkout',(req, res) => res.sendFile(path.join(__dirname, 'checkout.html')));
+app.get('/about',   (req, res) => res.sendFile(path.join(__dirname, 'about.html')));
+app.get('/order',   (req, res) => res.sendFile(path.join(__dirname, 'order.html')));
+app.get('/security',(req, res) => res.sendFile(path.join(__dirname, 'security.html')));
 
 // ────────────────────────────────────────────────────────────────────────────────
 // 7) AI Proxy route using Groq JS SDK
@@ -630,10 +630,10 @@ app.post('/register', async (req, res) => {
 });
 
 // ────────────────────────────────────────────────────────────────────────────────
-// 13) Start the server
+// 13) Start the server (listen on 0.0.0.0 and dynamic PORT)
 // ────────────────────────────────────────────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Server running on 0.0.0.0:${PORT}`);
   console.log("📁 Static files served from:", __dirname);
   console.log("🖼️  Images served from /images/");
 });
