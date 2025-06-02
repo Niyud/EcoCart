@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -11,7 +12,10 @@ const connectToDatabase = require('./db');
 // ADDED: Import Groq for AI proxy (use .default to get the constructor)
 // ──────────────────────────────────────────────────────────────────────────
 const Groq = require('groq-sdk').default;
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
+if (!GROQ_API_KEY) {
+  throw new Error("GROQ_API_KEY not set in environment");
+}
 const groqClient = new Groq({ apiKey: GROQ_API_KEY });
 // ──────────────────────────────────────────────────────────────────────────
 
