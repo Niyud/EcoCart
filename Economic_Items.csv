@@ -1,0 +1,33 @@
+_id,Name,Category,Price,Rating,ImageLink
+683702ec71bcd39d6b493ad2,Eco-Friendly T-Shirt,Clothing,25,4.5,/images/shirt.jpg
+683702ec71bcd39d6b493ad3,Reusable Water Bottle,Accessories,15,4.6,/images/bottle.jpg
+683702ec71bcd39d6b493ad4,Organic Cotton Bag,Accessories,20,4.2,/images/bag.jpg
+683702ec71bcd39d6b493ad5,Bamboo Toothbrush,Personal Care,5,4.8,/images/toothbrush.jpg
+683702ec71bcd39d6b493ad6,Solar Power Bank,Electronics,40,4.4,/images/powerbank.jpg
+683702ec71bcd39d6b493ad7,Eco Yoga Mat,Fitness,30,4.6,/images/yoga.jpg
+683702ec71bcd39d6b493ad8,Plant-Based Soap Set,Personal Care,18,4.3,/images/soap.jpg
+683702ec71bcd39d6b493ad9,Eco Journal,Stationery,12,4.1,/images/journal.jpg
+683702ec71bcd39d6b493ada,Compost Bin,Garden,28,4.5,/images/bin.jpg
+683702ec71bcd39d6b493adb,LED Desk Lamp,Electronics,22,4.4,/images/lamp.jpg
+683702ec71bcd39d6b493adc,Stainless Steel Straw Set,Kitchen,10,4.7,/images/straw.jpg
+683702ec71bcd39d6b493add,Eco Sneakers,Footwear,55,4.4,/images/sneakers.jpg
+683702ec71bcd39d6b493ade,Eco Pen Pack,Stationery,9,4.2,/images/pen.jpg
+683702ec71bcd39d6b493adf,Reusable Food Wraps,Kitchen,13,4.6,/images/wraps.jpg
+683702ec71bcd39d6b493ae0,Biodegradable Phone Case,Accessories,19,4.3,/images/case.jpg
+683702ec71bcd39d6b493ae1,Eco-Friendly Notebook,Stationery,8,4.5,/images/notebook.jpg
+683702ec71bcd39d6b493ae2,Reusable Shopping Bag,Accessories,12,4.6,/images/shop.jpg
+683702ec71bcd39d6b493ae3,Organic Cotton Socks,Clothing,10,4.7,/images/socks.jpg
+683702ec71bcd39d6b493ae4,Eco-Friendly Lunch Box,Kitchen,25,4.8,/images/lunchbox.jpg
+683702ec71bcd39d6b493ae5,Solar-Powered Charger,Electronics,35,4.6,/images/solar.jpg
+683702ec71bcd39d6b493ae6,Recycled Paper Pencils,Stationery,5,4.3,/images/pencil.jpg
+683702ec71bcd39d6b493ae7,Reusable Coffee Cup,Kitchen,14,4.7,/images/coffee.jpg
+683702ec71bcd39d6b493ae8,Eco-Friendly Dish Brush,Kitchen,7,4.5,/images/brush.jpg
+683702ec71bcd39d6b493ae9,Organic Pillowcase,Home,16,4.6,/images/pillow.jpg
+683702ec71bcd39d6b493aea,Reusable Cotton Pads,Personal Care,12,4.5,/images/pads.jpg
+683702ec71bcd39d6b493aeb,Wooden Sunglasses,Accessories,35,4.3,/images/glasses.jpg
+683702ec71bcd39d6b493aec,Eco-Friendly Laptop Sleeve,Electronics,28,4.4,/images/laptop.jpg
+683702ec71bcd39d6b493aed,Bamboo Cutlery Set,Kitchen,18,4.6,/images/bombooset.jpg
+683702ec71bcd39d6b493aee,Recycled Fabric Blanket,Home,45,4.7,/images/blanket.jpg
+683702ec71bcd39d6b493aef,Eco-Friendly Paint Set,Arts,22,4.2,/images/paint.jpg
+683702ec71bcd39d6b493af0,Solar-Powered Garden Lights,Garden,50,4.5,/images/lights.jpg
+683702ec71bcd39d6b493af1,Biodegradable Trash Bags,Home,9,4.6,/images/trash.jpg

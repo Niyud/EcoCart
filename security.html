@@ -1,0 +1,167 @@
+<!--Code Function: 
+    Security Page - Allows users to edit their password
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Change Password - Eco-Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e8f5e9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 25px;
+      color: #2e7d32;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      border: 1px solid #a5d6a7;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 20px;
+      top: calc(50% - 10px);
+      cursor: pointer;
+      color: #777;
+    }
+
+    .field-wrapper {
+      position: relative;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 15px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Change Password</h2>
+    <form id="security-form">
+      <div class="field-wrapper">
+        <input type="email" id="email" placeholder="Confirm Email" required />
+      </div>
+      <div class="field-wrapper">
+        <input type="password" id="new-password" placeholder="New Password" required />
+        <span class="toggle-password" id="toggle-new">👁️</span>
+      </div>
+      <div class="field-wrapper">
+        <input type="password" id="confirm-password" placeholder="Confirm New Password" required />
+        <span class="toggle-password" id="toggle-confirm">👁️</span>
+      </div>
+      <button type="submit">Update Password</button>
+      <div class="status" id="statusMsg"></div>
+    </form>
+  </div>
+
+  <script>
+    const statusMsg = document.getElementById("statusMsg");
+
+    function setupToggle(toggleId, inputId) {
+      const toggle = document.getElementById(toggleId);
+      const input = document.getElementById(inputId);
+      toggle.addEventListener("click", () => {
+        input.type = input.type === "password" ? "text" : "password";
+      });
+    }
+
+    setupToggle("toggle-new", "new-password");
+    setupToggle("toggle-confirm", "confirm-password");
+
+    document.getElementById("security-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      statusMsg.textContent = "";
+      statusMsg.style.color = "red";
+
+      const email = document.getElementById("email").value.trim();
+      const newPassword = document.getElementById("new-password").value;
+      const confirmPassword = document.getElementById("confirm-password").value;
+
+      if (newPassword.length < 6) {
+        statusMsg.textContent = "New password must be at least 6 characters.";
+        return;
+      }
+      if (newPassword !== confirmPassword) {
+        statusMsg.textContent = "New password and confirmation do not match.";
+        return;
+      }
+
+      try {
+        const response = await fetch("/change_password", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            email,
+            currentPassword: "skip", // Placeholder, server just checks email now
+            newPassword
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          statusMsg.style.color = "green";
+          statusMsg.textContent = "Password updated successfully!";
+          setTimeout(() => {
+            window.location.href = "profile.html";
+          }, 1500);
+        } else {
+          statusMsg.textContent = result.message || "Password change failed";
+        }
+      } catch (error) {
+        console.error("Password change error:", error);
+        statusMsg.textContent = "Server error. Please try again later.";
+      }
+    });
+  </script>
+</body>
+</html>

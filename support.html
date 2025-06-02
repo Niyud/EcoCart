@@ -1,0 +1,135 @@
+<!--Code Function: 
+    Support Page - Allows users to view Support
+    Date: 28/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eco-Cart Support Center</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f1f8f4;
+            color: #2e7d32;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #1b5e20;
+            text-align: center;
+        }
+
+        .section {
+            margin-top: 20px;
+        }
+
+        .support-link {
+            background-color: #a5d6a7;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .support-link a {
+            color: #1b5e20;
+            text-decoration: none;
+        }
+
+        .support-link a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-info {
+            background-color: #a5d6a7;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .contact-info p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Eco-Cart Support Center</h1>
+
+        <h2>How Can We Help?</h2>
+        <div class="section">
+            <p>Our support center is designed to provide quick solutions to common issues. Select a category below to get started:</p>
+
+            <div class="support-link"><a href="help.html">Frequently Asked Questions (FAQ)</a></div>
+            <div class="support-link"><a href="#troubleshooting">Troubleshooting Guide</a></div>
+            <div class="support-link"><a href="#orders">Order & Payment Issues</a></div>
+            <div class="support-link"><a href="#account">Account Management</a></div>
+            <div class="support-link"><a href="#contact">Contact Customer Service</a></div>
+        </div>
+
+        <h2 id="troubleshooting">Troubleshooting Guide</h2>
+        <div class="section">
+            <p>If you're experiencing technical issues, try these steps:</p>
+            <ul>
+                <li>🔄 **Refresh the page** – This can resolve minor display errors.</li>
+                <li>🧹 **Clear browser cache and cookies** – Improves loading speed and fixes login issues.</li>
+                <li>🔐 **Check your login credentials** – Ensure your email and password are entered correctly.</li>
+                <li>🔌 **Verify payment methods** – If transactions fail, check that your payment card details are up to date.</li>
+            </ul>
+        </div>
+
+        <h2 id="orders">Order & Payment Issues</h2>
+        <div class="section">
+            <p>Common order-related problems and solutions:</p>
+            <ul>
+                <li>💰 **Payment declined?** – Double-check your payment method or contact your bank.</li>
+                <li>📦 **Order not received?** – Check your tracking number on the **Order History** page.</li>
+                <li>📞 **Need a refund?** – Visit the **Returns & Refunds** section in your account.</li>
+            </ul>
+        </div>
+
+        <h2 id="account">Account Management</h2>
+        <div class="section">
+            <p>Manage your account settings and privacy:</p>
+            <ul>
+                <li>🔑 **Forgot password?** – Reset it from the **Login** page.</li>
+                <li>⚙️ **Update account info?** – Modify your details in **Account Settings**.</li>
+                <li>🚫 **Want to delete your account?** – Contact support for assistance.</li>
+            </ul>
+        </div>
+
+        <h2 id="contact">Contact Customer Service</h2>
+        <div class="contact-info">
+            <p><strong>Self-Service Center:</strong> Visit our <a href="help.html">Help Center</a> for instant support.</p>
+            <p><strong>Live Chat:</strong> Available daily from 9 AM - 6 PM (UTC).</p>
+            <p><strong>Call Customer Support via Free Internet Phone:</strong></p>
+            <p>Phone: +886-976-333-889</p>
+            <p>Available: Monday - Friday, 9 AM - 6 PM (UTC)</p>
+            <button 
+      class="go-shop" 
+      onclick="sessionStorage.setItem('hasVisitedEcoCart','true'); window.location.href='index.html';"
+    >
+      Back to shopping
+    </button>
+        </div>
+    </div>
+
+</body>
+</html>

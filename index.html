@@ -1,0 +1,676 @@
+<!--Code Function: 
+    User Index Page - Allows users to view the shop
+    Date: 16/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eco-Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <!-- Google Font for Logo -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+
+  <!-- Redirect once per session; after that, stay on index.html -->
+  <script>
+    window.addEventListener("load", () => {
+      const fromWelcome = document.referrer.includes("welcome.html");
+      if (!sessionStorage.getItem("hasVisitedEcoCart") && !fromWelcome) {
+        sessionStorage.setItem("hasVisitedEcoCart", "true");
+        window.location.href = "welcome.html";
+      }
+    });
+  </script>
+
+  <!-- Inline Styles for Gradient Background & Navbar (cards left unchanged) -->
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      position: relative;
+      overflow-x: hidden;
+      /* Animated gradient background */
+      background: linear-gradient(120deg, #84fab0, #8fd3f4);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* Header */
+    header {
+      background-color: rgba(0,0,0,0.6);
+      padding: 15px 20px;
+      color: white;
+      display: flex;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Title */
+    .logo {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0;
+      cursor: default;
+    }
+
+    /* Navigation Links */
+    nav {
+      margin-left: 40px;
+    }
+    .nav-links {
+      list-style: none;
+      display: flex;
+      gap: 15px;
+    }
+    .nav-links a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+      padding: 8px 12px;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+    }
+    .nav-links a:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Auth icons container */
+    .auth-icons {
+      margin-left: auto;
+      display: flex;
+      gap: 15px;
+      align-items: center;
+    }
+    .auth-icons img {
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+    .auth-icons img:hover {
+      transform: scale(1.1);
+    }
+
+    /* Container override */
+    .container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 20px auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Product Grid */
+    .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      align-items: stretch;
+    }
+    .card {
+      flex: 1 1 calc(25% - 20px);
+      box-sizing: border-box;
+      padding: 20px;
+      border: 1px solid #c8e6c9;
+      border-radius: 10px;
+      text-align: center;
+      min-height: 350px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      background-color: white;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px) scale(1.02);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      border-radius: 6px;
+      margin-bottom: 10px;
+    }
+    .card h3 {
+      font-size: 1.2rem;
+      min-height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .card .price {
+      color: #d32f2f;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    .card .rating {
+      color: #fbc02d;
+      font-size: 1rem;
+    }
+    .card button {
+      margin-top: auto;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease;
+    }
+    .card button:hover {
+      background-color: #1b5e20;
+      transform: translateY(-2px);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+      .auth-icons {
+        gap: 10px;
+      }
+      .logo {
+        font-size: 2rem;
+      }
+      .card {
+        flex: 1 1 calc(50% - 20px);
+      }
+    }
+
+    /* ---------------- AI CHAT BUTTON & BOX ---------------- */
+    #ai-toggle-button {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #2e7d32;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      z-index: 100;
+    }
+    #ai-toggle-button img {
+      width: 32px;
+      height: 32px;
+      pointer-events: none;
+    }
+    #ai-chat-box {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 320px;
+      max-height: 400px;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      z-index: 100;
+    }
+    #ai-chat-header {
+      background: #2e7d32;
+      color: white;
+      padding: 10px;
+      border-top-left-radius: 8px;
+      border-top-right-radius: 8px;
+      font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    #ai-close-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+    #ai-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: #f9f9f9;
+    }
+    .ai-message {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: flex-start;
+    }
+    .ai-message.user .content {
+      background: #e0f7fa;
+      color: #006064;
+      margin-left: auto;
+    }
+    .ai-message.bot .content {
+      background: #f1f8e9;
+      color: #33691e;
+      margin-right: auto;
+    }
+    .ai-message .content {
+      padding: 8px 12px;
+      border-radius: 12px;
+      max-width: 70%;
+      word-wrap: break-word;
+    }
+    #ai-input-container {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+    #ai-input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      font-size: 0.95rem;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    #ai-send-btn {
+      background: #2e7d32;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #ai-send-btn:hover {
+      background: #1b5e20;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <h1 class="logo">ECO-CART</h1>
+    <nav>
+      <ul class="nav-links">
+        <li><a href="welcome.html">Home</a></li>
+        <li><a href="cart.html">Cart</a></li>
+        <li><a href="wishlist.html">Wishlist</a></li>
+        <li><a href="profile.html">Profile</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="help.html">Help Center</a></li>
+        <li><a href="support.html">Support</a></li>
+        <li><a href="order.html">Add a Product</a></li>
+      </ul>
+    </nav>
+
+    <!-- Authentication Icons -->
+    <div class="auth-icons" id="auth-buttons">
+      <a href="login.html" title="Login">
+        <img src="https://cdn-icons-png.flaticon.com/512/1008/1008013.png" alt="Login Icon" />
+      </a>
+      <a href="register.html" title="Sign Up">
+        <img src="https://cdn-icons-png.flaticon.com/512/1828/1828911.png" alt="Sign Up Icon" />
+      </a>
+    </div>
+
+    <!-- User Icon Menu -->
+    <div class="user-icon" id="user-icon" style="display: none; position: relative;">
+      <img
+        id="user-icon-img"
+        src="https://cdn-icons-png.flaticon.com/512/847/847969.png"
+        alt="User Icon"
+        width="36"
+        style="cursor: pointer; border-radius: 50%;"
+        onclick="toggleUserMenu()"
+      />
+      <div id="user-menu" style="display: none; position: absolute; right: 0; background: white; border: 1px solid #ccc; border-radius: 6px; margin-top: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+        <a href="profile.html" style="display: block; padding: 10px; color: #2e7d32;">My Profile</a>
+        <a href="#" onclick="logoutUser()" style="display: block; padding: 10px; color: #d32f2f;">Logout</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Inline styles block for other sections (unchanged) -->
+  <style>
+    #search-filter .container {
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 20px;
+    }
+
+    #search-filter input[type="text"],
+    #search-filter select {
+      padding: 12px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      min-width: 180px;
+    }
+
+    #product-list .grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      margin-top: 30px;
+    }
+
+    .card {
+      border: 1px solid #ddd;
+      padding: 15px;
+      text-align: center;
+      width: 220px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      transition: transform 0.2s ease-in-out;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .card:hover {
+      transform: scale(1.03);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .card img {
+      width: 100%;
+      height: auto;
+      border-radius: 5px;
+      margin-bottom: 10px;
+    }
+
+    .card h3 {
+      margin-bottom: 5px;
+      color: #2e7d32;
+    }
+
+    .card .price {
+      color: #d32f2f;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .card .rating {
+      color: #fbc02d;
+      margin-bottom: 10px;
+    }
+
+    .card button {
+      padding: 10px;
+      background-color: #43a047;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      width: 100%;
+      font-weight: 600;
+      transition: background-color 0.3s ease;
+    }
+
+    .card button:hover {
+      background-color: #2e7d32;
+    }
+
+    .btn-wishlist {
+      background-color: #ffa726;
+    }
+
+    .btn-wishlist:hover {
+      background-color: #f57c00;
+    }
+
+    #user-menu a {
+      text-decoration: none;
+      display: block;
+    }
+
+    #user-menu a:hover {
+      background-color: #f1f8f4;
+    }
+
+    #error-message {
+      color: red;
+      font-size: 16px;
+      text-align: center;
+      display: none;
+    }
+  </style>
+
+  <!-- Filter section -->
+  <section id="search-filter">
+    <div class="container">
+      <input type="text" id="search" placeholder="Search products..." />
+
+      <select id="category-filter">
+        <option value="">All Categories</option>
+        <option value="Accessories">Accessories</option>
+        <option value="Arts">Arts</option>
+        <option value="Clothing">Clothing</option>
+        <option value="Electronics">Electronics</option>
+        <option value="Fitness">Fitness</option>
+        <option value="Footwear">Footwear</option>
+        <option value="Garden">Garden</option>
+        <option value="Home">Home</option>
+        <option value="Kitchen">Kitchen</option>
+        <option value="Personal Care">Personal Care</option>
+        <option value="Stationery">Stationery</option>
+      </select>
+
+      <select id="price-filter">
+        <option value="">All Prices</option>
+        <option value="0-25">$0 - $25</option>
+        <option value="25-75">$25 - $75</option>
+      </select>
+
+      <select id="sort-filter">
+        <option value="">Sort By: Default</option>
+        <option value="price-asc">Price: Low to High</option>
+        <option value="price-desc">Price: High to Low</option>
+        <option value="rating-desc">Rating: High to Low</option>
+      </select>
+    </div>
+  </section>
+
+  <!-- Product Listing -->
+  <section id="product-list">
+    <div class="container">
+      <h2 style="text-align: center; color: white;">Eco-Friendly Products</h2>
+      <p id="error-message">❌ Failed to load products. Please check your connection.</p>
+      <div class="grid" id="products">
+        <!-- Product cards rendered by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- AI Chat Toggle Button -->
+  <button id="ai-toggle-button" title="Chat with AI">
+    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712027.png" alt="AI Bot" />
+  </button>
+
+  <!-- AI Chat Box -->
+  <div id="ai-chat-box">
+    <div id="ai-chat-header">
+      <span>Eco-Cart AI Assistant</span>
+      <button id="ai-close-btn">&times;</button>
+    </div>
+    <div id="ai-messages"></div>
+    <div id="ai-input-container">
+      <input type="text" id="ai-input" placeholder="Ask me for product recommendations or support..." />
+      <button id="ai-send-btn">Send</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer style="background-color: rgba(0,0,0,0.6); padding: 15px 0;">
+    <div class="container" style="text-align: center;">
+      <p style="color: white;">&copy; 2025 Eco-Cart. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <!-- Script imports -->
+  <script src="script.js"></script>
+
+  <!-- Inline script for login icon logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const authButtons = document.getElementById("auth-buttons");
+      const userIcon = document.getElementById("user-icon");
+      const userImg = document.getElementById("user-icon-img");
+
+      const userData = JSON.parse(localStorage.getItem("loggedInUser"));
+      const isLoggedIn = !!userData;
+
+      if (isLoggedIn) {
+        authButtons.style.display = "none";
+        userIcon.style.display = "block";
+
+        // If profileImageUrl exists, use it; otherwise fallback to default
+        if (userData.profileImageUrl) {
+          userImg.src = userData.profileImageUrl;
+        }
+      } else {
+        authButtons.style.display = "flex";
+        userIcon.style.display = "none";
+      }
+    });
+
+    function toggleUserMenu() {
+      const menu = document.getElementById("user-menu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function logoutUser() {
+      localStorage.removeItem("loggedInUser");
+      alert("You have been logged out.");
+      window.location.reload();
+    }
+  </script>
+
+  <!-- Added script for View Product button to save actual product image -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const productsContainer = document.getElementById('products');
+
+      productsContainer.addEventListener('click', (event) => {
+        if (event.target && event.target.classList.contains('btn-view-product')) {
+          const card = event.target.closest('.card');
+          if (!card) return;
+
+          const img = card.querySelector('img');
+          if (img) {
+            localStorage.setItem('selectedProductImage', img.src);
+            window.location.href = 'product.html';
+          }
+        }
+      });
+    });
+  </script>
+
+  <!-- AI Chat Box Script (UPDATED) -->
+  <script>
+    const toggleButton = document.getElementById('ai-toggle-button');
+    const chatBox = document.getElementById('ai-chat-box');
+    const closeBtn = document.getElementById('ai-close-btn');
+    const messagesDiv = document.getElementById('ai-messages');
+    const inputField = document.getElementById('ai-input');
+    const sendBtn = document.getElementById('ai-send-btn');
+
+    // Show/hide the chat box
+    toggleButton.addEventListener('click', () => {
+      chatBox.style.display = 'flex';
+    });
+    closeBtn.addEventListener('click', () => {
+      chatBox.style.display = 'none';
+    });
+
+    // Append a message bubble into the chat
+    function appendMessage(content, sender) {
+      const msgEl = document.createElement('div');
+      msgEl.classList.add('ai-message', sender);
+      const bubble = document.createElement('div');
+      bubble.classList.add('content');
+      bubble.innerHTML = content; // allow HTML links
+      msgEl.appendChild(bubble);
+      messagesDiv.appendChild(msgEl);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight;
+    }
+
+    // Send user prompt to your Flask proxy: /api/ask-ai
+    async function sendPrompt() {
+      const promptText = inputField.value.trim();
+      if (!promptText) return;
+
+      appendMessage(promptText, 'user');
+      inputField.value = '';
+
+      // Show "Typing..." placeholder
+      appendMessage('Typing...', 'bot');
+
+      try {
+        const resp = await fetch('/api/ask-ai', {        <!-- Changed from "/as/apik-ai" to "/api/ask-ai" -->
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt: promptText })
+        });
+        const data = await resp.json();
+
+        // Remove "Typing..." bubble
+        const lastBubble = messagesDiv.querySelector('.ai-message.bot:last-child .content');
+        if (lastBubble && lastBubble.textContent === 'Typing...') {
+          lastBubble.parentElement.remove();
+        }
+
+        if (data.response) {
+          let reply = data.response;
+          const lower = promptText.toLowerCase();
+
+          // If user asks for navigation help:
+          if (lower.includes('recommend') || lower.includes('suggest')) {
+            reply += ` <br><br>
+• <a href="category.html?cat=Electronics">Electronics</a><br>
+• <a href="category.html?cat=Home">Home</a><br>
+• <a href="category.html?cat=Fitness">Fitness</a>`;
+          }
+          if (lower.includes('support') || lower.includes('help')) {
+            reply += ` <br><br>
+Visit our <a href="help.html">Help Center</a> or <a href="support.html">Support Page</a>.`;
+          }
+
+          appendMessage(reply, 'bot');
+        } else if (data.error) {
+          appendMessage(`Error: ${data.error}`, 'bot');
+        } else {
+          appendMessage('Sorry, no response from the server.', 'bot');
+        }
+      } catch (error) {
+        // Remove "Typing..." bubble
+        const lastBubble = messagesDiv.querySelector('.ai-message.bot:last-child .content');
+        if (lastBubble && lastBubble.textContent === 'Typing...') {
+          lastBubble.parentElement.remove();
+        }
+        appendMessage(`Error: ${error.message}`, 'bot');
+      }
+    }
+
+    sendBtn.addEventListener('click', sendPrompt);
+    inputField.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendPrompt();
+      }
+    });
+  </script>
+</body>
+</html>

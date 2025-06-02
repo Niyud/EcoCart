@@ -1,0 +1,326 @@
+<!-- 
+  Code Function: 
+    Product Page - Admins manage products from here
+  Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Add a Product - EcoCart</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    .container {
+      background: white;
+      max-width: 800px;
+      margin: auto;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #2e7d32;
+      margin-bottom: 25px;
+      font-size: 28px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    input, select {
+      padding: 12px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      width: 100%;
+      transition: border-color 0.3s ease;
+    }
+    input:focus, select:focus { border-color: #2e7d32; outline: none; }
+    button {
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      padding: 14px;
+      font-size: 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover { background-color: #1b5e20; }
+    #message {
+      margin-top: 12px;
+      font-weight: bold;
+      text-align: center;
+    }
+    .preview-container {
+      margin-top: 30px;
+    }
+    .preview-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+    .product-card {
+      max-width: 300px;
+      background: #fafafa;
+      border-radius: 12px;
+      padding: 15px;
+      border: 1px solid #ccc;
+      transition: box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .product-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    .product-card .name {
+      font-weight: 600;
+      color: #2e7d32;
+      font-size: 18px;
+    }
+    .product-card .price {
+      font-weight: bold;
+      color: #000;
+    }
+    .product-card .category {
+      font-size: 14px;
+      color: #555;
+    }
+    .product-card .rating {
+      font-size: 14px;
+      color: #777;
+    }
+    .back-btn {
+      display: inline-block;
+      margin-bottom: 15px;
+      text-decoration: none;
+      color: #2e7d32;
+      font-weight: 600;
+    }
+    .back-btn:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="#" class="back-btn" onclick="sessionStorage.setItem('hasVisitedEcoCart','true'); window.location.href='index.html';">
+      ← Back to Shop
+    </a>
+    <h1>Add a New Product</h1>
+    <!-- 
+      enctype="multipart/form-data" is required so that file inputs are sent correctly.
+      novalidate just disables the browser's native validation bubbles, since we show our own messages.
+    -->
+    <form id="orderProductForm" enctype="multipart/form-data" novalidate>
+      <!-- 1) Product Name (server expects field “Name”) -->
+      <input type="text" name="Name" placeholder="Product Name" required />
+
+      <!-- 2) Product Image file (server expects the field name “image”) -->
+      <input type="file" name="image" accept="image/*" required />
+
+      <!-- 3) Price ($) (server expects field “Price”) -->
+      <input type="number" name="Price" placeholder="Price ($)" min="0" max="75" step="0.01" required />
+
+      <!-- 4) Category (server expects field “Category”) -->
+      <input type="text" name="Category" placeholder="Category" list="categoryList" required />
+      <datalist id="categoryList">
+        <option value="Accessories"></option>
+        <option value="Arts"></option>
+        <option value="Clothing"></option>
+        <option value="Electronics"></option>
+        <option value="Fitness"></option>
+        <option value="Footwear"></option>
+        <option value="Garden"></option>
+        <option value="Home"></option>
+        <option value="Kitchen"></option>
+        <option value="Personal Care"></option>
+        <option value="Stationery"></option>
+      </datalist>
+
+      <!-- 5) Rating (optional) (server expects field “Rating”) -->
+      <input type="number" name="Rating" placeholder="Rating (1 to 5, optional)" min="1" max="5" step="0.1" />
+
+      <button type="submit">Add Product</button>
+      <div id="message"></div>
+    </form>
+
+    <!-- Live Preview Panel -->
+    <div class="preview-container">
+      <div class="preview-title">Live Product Preview</div>
+      <div class="product-card" id="productPreview">
+        <img id="previewImg" src="https://via.placeholder.com/300x200?text=Preview" alt="Preview Image" />
+        <div class="name" id="previewName">Product Name</div>
+        <div class="price" id="previewPrice">$0.00</div>
+        <div class="category" id="previewCategory">Category</div>
+        <div class="rating" id="previewRating">Rating: N/A</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('orderProductForm');
+    const message = document.getElementById('message');
+    const previewImg = document.getElementById('previewImg');
+    const previewName = document.getElementById('previewName');
+    const previewPrice = document.getElementById('previewPrice');
+    const previewCategory = document.getElementById('previewCategory');
+    const previewRating = document.getElementById('previewRating');
+    const imageInput = form.image; // <input type="file" name="image">
+
+    // Live Preview: Product Name
+    form.Name.addEventListener('input', () => {
+      previewName.textContent = form.Name.value.trim() || 'Product Name';
+    });
+
+    // Live Preview: Image File
+    imageInput.addEventListener('change', () => {
+      const file = imageInput.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          previewImg.src = reader.result;
+        };
+        reader.readAsDataURL(file);
+      } else {
+        previewImg.src = 'https://via.placeholder.com/300x200?text=Preview';
+      }
+    });
+
+    // Live Preview: Price
+    form.Price.addEventListener('input', () => {
+      const price = parseFloat(form.Price.value);
+      if (!isNaN(price)) {
+        previewPrice.textContent = `$${price.toFixed(2)}`;
+        previewPrice.style.color = price > 75 ? 'red' : '#000';
+        if (price > 75) previewPrice.textContent += ' ⚠️ Max $75';
+      } else {
+        previewPrice.textContent = '$0.00';
+        previewPrice.style.color = '#000';
+      }
+    });
+
+    // Live Preview: Category
+    form.Category.addEventListener('input', () => {
+      previewCategory.textContent = form.Category.value.trim() || 'Category';
+    });
+
+    // Live Preview: Rating
+    form.Rating.addEventListener('input', () => {
+      const rating = parseFloat(form.Rating.value);
+      if (!isNaN(rating) && rating >= 1 && rating <= 5) {
+        previewRating.textContent = `Rating: ${rating.toFixed(1)}`;
+      } else {
+        previewRating.textContent = 'Rating: N/A';
+      }
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      message.textContent = '';
+      message.style.color = '';
+
+      // Gather form values
+      const name = form.Name.value.trim();
+      const price = parseFloat(form.Price.value);
+      const category = form.Category.value.trim();
+      const ratingRaw = form.Rating.value.trim();
+      const rating = ratingRaw === '' ? null : parseFloat(ratingRaw);
+      const imageFile = imageInput.files[0];
+
+      // Client‐side validation
+      if (!name) {
+        message.textContent = '❌ Product Name is required.';
+        message.style.color = 'red';
+        return;
+      }
+      if (!imageFile) {
+        message.textContent = '❌ Product image file is required.';
+        message.style.color = 'red';
+        return;
+      }
+      if (isNaN(price) || price < 0 || price > 75) {
+        message.textContent = '❌ Price must be between $0 and $75.';
+        message.style.color = 'red';
+        return;
+      }
+      if (!category) {
+        message.textContent = '❌ Category is required.';
+        message.style.color = 'red';
+        return;
+      }
+      if (rating !== null && (isNaN(rating) || rating < 1 || rating > 5)) {
+        message.textContent = '❌ Rating must be between 1 and 5.';
+        message.style.color = 'red';
+        return;
+      }
+
+      // Construct FormData (enctype="multipart/form-data")
+      const formData = new FormData();
+      formData.append('Name', name);
+      formData.append('Price', price.toString());
+      formData.append('Category', category);
+      formData.append('image', imageFile);
+      if (rating !== null) {
+        formData.append('Rating', rating.toString());
+      }
+
+      try {
+        const response = await fetch('/add-product', {
+          method: 'POST',
+          body: formData
+        });
+        const contentType = response.headers.get('content-type') || '';
+        if (!response.ok) {
+          const errorText = await response.text();
+          throw new Error(errorText || `Server responded with ${response.status}`);
+        }
+        if (contentType.includes('application/json')) {
+          const result = await response.json();
+          if (result.success) {
+            message.textContent = '✅ Product added successfully!';
+            message.style.color = 'green';
+            form.reset();
+
+            // Reset preview
+            previewImg.src = 'https://via.placeholder.com/300x200?text=Preview';
+            previewName.textContent = 'Product Name';
+            previewPrice.textContent = '$0.00';
+            previewCategory.textContent = 'Category';
+            previewRating.textContent = 'Rating: N/A';
+          } else {
+            message.textContent = '❌ ' + (result.message || 'Failed to add product.');
+            message.style.color = 'red';
+          }
+        } else {
+          message.textContent = '❌ Unexpected server response. Please contact support.';
+          message.style.color = 'red';
+        }
+      } catch (err) {
+        console.error('Error uploading product:', err);
+        message.textContent = '❌ Failed to upload product. Please try again.';
+        message.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

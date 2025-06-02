@@ -1,0 +1,82 @@
+<!--Code Function: 
+    About Page - Allows users to view the shop info
+    Date: 18/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Eco-Cart</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f1f8f4;
+            color: #2e7d32;
+            line-height: 1.6;
+            margin: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #1b5e20;
+            text-align: center;
+        }
+        p {
+            text-align: justify;
+        }
+        .contact {
+            background-color: #a5d6a7;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        .contact a {
+            color: #1b5e20;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>About Eco-Cart</h1>
+
+        <h2>Our Vision & Mission</h2>
+        <p><strong>Vision:</strong> At Eco-Cart, we envision a future where sustainable shopping is accessible to all, enabling individuals to make environmentally responsible choices without compromising convenience or affordability.</p>
+        <p><strong>Mission:</strong> Our mission is to create an eco-friendly marketplace that connects consumers with sustainable products. We strive to promote ethical sourcing, reduce waste, and encourage conscious consumerism through innovative solutions and responsible business practices.</p>
+
+        <h2>Privacy & Policies</h2>
+        <p>At Eco-Cart, we prioritize transparency and user privacy. Below are key principles of our privacy policy:</p>
+        <ul>
+            <li>We do not sell or share personal information with third parties.</li>
+            <li>User data is securely stored and used only to enhance your shopping experience.</li>
+            <li>Our website utilizes encryption protocols to ensure secure transactions.</li>
+            <li>Customers have full control over their data, with options to manage and delete account information.</li>
+        </ul>
+        <p>By using Eco-Cart, you agree to our responsible use of cookies and data collection for site functionality and personalization.</p>
+
+        <h2>Contact Us</h2>
+        <div class="contact">
+            <p><strong>Email:</strong> <a href="mailto:ecocart@gmail.com">ecocart@gmail.com</a></p>
+            <p><strong>Instagram:</strong> <a href="https://www.instagram.com/ecocarton2025" target="_blank">@ecocarton2025</a></p>
+            <button 
+      class="go-shop" 
+      onclick="sessionStorage.setItem('hasVisitedEcoCart','true'); window.location.href='index.html';"
+    >
+      Back to shopping
+    </button>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,690 @@
+<!--Code Function: 
+    Product Info Page - Allows users to view, comment, and add product
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco-Cart | Product Details</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f8f4;
+      color: #2e7d32;
+      text-align: center;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .product-container {
+      max-width: 600px;
+      margin: 20px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    .product-container img {
+      max-width: 250px;
+      height: auto;
+      border-radius: 8px;
+      object-fit: contain;
+      margin-bottom: 15px;
+    }
+
+    .product-container h2 {
+      margin: 12px 0 4px;
+      font-size: 1.5rem;
+    }
+
+    .product-container p {
+      margin: 4px 0;
+      font-size: 1rem;
+    }
+
+    .quantity-selector {
+      margin: 10px 0;
+    }
+
+    .quantity-selector input {
+      width: 60px;
+      padding: 5px;
+      font-size: 1rem;
+    }
+
+    button {
+      margin-top: 10px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background-color 0.2s ease;
+    }
+
+    .add-cart {
+      background: #4caf50;
+      color: white;
+    }
+
+    .add-cart:hover {
+      background: #388e3c;
+    }
+
+    .add-wishlist {
+      background: #fbc02d;
+      color: black;
+      margin-left: 10px;
+    }
+
+    .add-wishlist:hover {
+      background: #f0b21a;
+    }
+
+    .delete-product {
+      background: #d32f2f;
+      color: white;
+      margin-left: 10px;
+    }
+
+    .delete-product:hover {
+      background: #b71c1c;
+    }
+
+    .back-home {
+      display: inline-block;
+      margin-top: 20px;
+      text-decoration: none;
+      color: #2e7d32;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+
+    .back-home:hover {
+      text-decoration: underline;
+    }
+
+    .error-message {
+      color: #d32f2f;
+      font-size: 1rem;
+      margin-top: 20px;
+    }
+
+    /* ----------------- Comments Section ----------------- */
+    #comments-section {
+      max-width: 600px;
+      margin: 40px auto 20px;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+      text-align: left;
+      color: #2e7d32;
+    }
+
+    #comments-section h3 {
+      margin-bottom: 12px;
+      font-size: 1.25rem;
+      text-align: center;
+    }
+
+    .comment {
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #ddd;
+      position: relative;
+    }
+
+    .comment img {
+      max-width: 100%;
+      margin-top: 8px;
+      border-radius: 6px;
+    }
+
+    .comment p {
+      margin: 4px 0;
+      font-size: 0.95rem;
+    }
+
+    .comment .timestamp {
+      color: #777;
+      font-size: 0.85rem;
+      margin-top: 6px;
+    }
+
+    .comment-buttons {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      gap: 6px;
+    }
+
+    .comment-buttons button {
+      background: transparent;
+      border: none;
+      color: #777;
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: color 0.2s ease;
+    }
+
+    .comment-buttons button:hover {
+      color: #d32f2f;
+    }
+
+    #comment-form {
+      margin-top: 20px;
+      text-align: center;
+    }
+
+    #comment-form textarea {
+      width: 100%;
+      padding: 8px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      resize: vertical;
+    }
+
+    #comment-form select,
+    #comment-form input[type="file"] {
+      margin-top: 10px;
+      padding: 6px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    #comment-form button {
+      margin-top: 12px;
+      background: #2196f3;
+      color: white;
+    }
+
+    #comment-form button:hover {
+      background: #1976d2;
+    }
+
+    .edit-form {
+      margin-top: 10px;
+    }
+
+    .edit-form textarea,
+    .edit-form select,
+    .edit-form input[type="file"] {
+      width: 100%;
+      margin-top: 6px;
+      padding: 6px;
+      font-size: 0.95rem;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .edit-form button {
+      margin-top: 8px;
+      background: #4caf50;
+      color: white;
+      font-size: 0.9rem;
+      padding: 6px 12px;
+    }
+
+    .edit-form button.cancel {
+      background: #d32f2f;
+      margin-left: 6px;
+    }
+    /* ---------------------------------------------------- */
+  </style>
+</head>
+<body>
+  <div class="product-container" id="product-container">
+    <img id="product-image" src="" alt="Product Image" />
+    <h2 id="product-name">Product Name</h2>
+    <p><strong>Category:</strong> <span id="product-category"></span></p>
+    <p><strong>Price:</strong> $<span id="unit-price"></span></p>
+    <p><strong>Rating:</strong> <span id="product-rating"></span> ⭐</p>
+    <p><strong>Description:</strong> <span id="product-description"></span></p>
+
+    <div class="quantity-selector">
+      <label for="qty">Quantity:</label>
+      <input type="number" id="qty" value="1" min="1" />
+    </div>
+
+    <p><strong>Total:</strong> $<span id="total-price"></span></p>
+
+    <button class="add-cart" onclick="addToCartFromProduct()">Add to Cart</button>
+    <button class="add-wishlist" onclick="addToWishlistFromProduct()">Add to Wishlist</button>
+    <button class="delete-product" onclick="deleteProduct()">Delete Product</button>
+
+    <br />
+    <a href="index.html" class="back-home">⬅ Back to Home</a>
+  </div>
+
+  <!-- ----------------- Comments Section ----------------- -->
+  <div id="comments-section">
+    <h3>Comments</h3>
+    <div id="existing-comments">
+      <!-- Existing comments will be injected here -->
+    </div>
+
+    <div id="comment-form">
+      <h4>Add a Comment</h4>
+      <textarea id="comment-text" rows="4" placeholder="Write your comment..."></textarea>
+      <br />
+      <label for="comment-rating">Rating:</label>
+      <select id="comment-rating">
+        <option value="5">5 ⭐</option>
+        <option value="4">4 ⭐</option>
+        <option value="3">3 ⭐</option>
+        <option value="2">2 ⭐</option>
+        <option value="1">1 ⭐</option>
+      </select>
+      <br />
+      <label for="comment-image">Upload Image (optional):</label>
+      <input type="file" id="comment-image" accept="image/*" />
+      <br />
+      <button onclick="submitComment()">Submit Comment</button>
+    </div>
+  </div>
+  <!-- ------------------------------------------------------ -->
+
+  <script>
+    // Utility: safely load an array from localStorage
+    function loadLocalStorage(key) {
+      try {
+        const data = JSON.parse(localStorage.getItem(key));
+        return Array.isArray(data) ? data : [];
+      } catch {
+        return [];
+      }
+    }
+
+    // Utility: save data to localStorage
+    function saveLocalStorage(key, data) {
+      localStorage.setItem(key, JSON.stringify(data));
+    }
+
+    // Update the "Total" price based on unit price * quantity
+    function updateTotalPrice(price) {
+      const qtyInput = document.getElementById("qty");
+      let qty = parseInt(qtyInput.value);
+      if (isNaN(qty) || qty < 1) {
+        qty = 1;
+        qtyInput.value = qty;
+      }
+      document.getElementById("total-price").textContent = (price * qty).toFixed(2);
+    }
+
+    let currentProduct = null; // Will hold the parsed product object
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const container = document.getElementById("product-container");
+      const productRaw = localStorage.getItem("selectedProduct");
+
+      if (!productRaw) {
+        container.innerHTML = `
+          <p class="error-message">⚠️ Product data not found.</p>
+          <a href="index.html" class="back-home">⬅ Back to Home</a>
+        `;
+        // Hide comments if no product
+        document.getElementById("comments-section").style.display = "none";
+        return;
+      }
+
+      try {
+        currentProduct = JSON.parse(productRaw);
+      } catch {
+        container.innerHTML = `
+          <p class="error-message">⚠️ Invalid product data.</p>
+          <a href="index.html" class="back-home">⬅ Back to Home</a>
+        `;
+        document.getElementById("comments-section").style.display = "none";
+        return;
+      }
+
+      // Normalize keys (some APIs use uppercase first letter, some lowercase)
+      const name = currentProduct.Name || currentProduct.name || "Unnamed Product";
+      const category = currentProduct.Category || currentProduct.category || "Unknown";
+      const priceRaw = currentProduct.Price ?? currentProduct.price ?? 0;
+      const price = parseFloat(priceRaw) || 0;
+      const ratingRaw = currentProduct.Rating ?? currentProduct.rating ?? 0;
+      const rating = parseFloat(ratingRaw) || 0;
+      const description = currentProduct.Description || currentProduct.description || "No description available.";
+      const imageLink = currentProduct.ImageLink || currentProduct.image || "";
+
+      // Set image src directly from product.ImageLink
+      const imageEl = document.getElementById("product-image");
+      if (imageLink.trim() !== "") {
+        imageEl.src = imageLink;
+      } else {
+        imageEl.src = "images/placeholder.jpg";
+      }
+      imageEl.alt = name;
+      imageEl.onerror = function () {
+        this.onerror = null;
+        this.src = 'images/placeholder.jpg';
+      };
+
+      // Populate product details
+      document.getElementById("product-name").textContent = name;
+      document.getElementById("product-category").textContent = category;
+      document.getElementById("unit-price").textContent = price.toFixed(2);
+      document.getElementById("product-rating").textContent = rating.toFixed(1);
+      document.getElementById("product-description").textContent = description;
+
+      // Initialize total price
+      updateTotalPrice(price);
+
+      // When quantity input changes, update total price
+      document.getElementById("qty").addEventListener("input", () => {
+        updateTotalPrice(price);
+      });
+
+      // Fetch and display existing comments for this product
+      fetchComments();
+    });
+
+    // Add the current product (with chosen quantity) to the cart
+    function addToCartFromProduct() {
+      const cart = loadLocalStorage("cart");
+      if (!currentProduct) {
+        alert("⚠️ No product selected.");
+        return;
+      }
+
+      const qtyInput = document.getElementById("qty");
+      let qty = parseInt(qtyInput.value);
+      if (isNaN(qty) || qty < 1) qty = 1;
+
+      const name = currentProduct.Name || currentProduct.name || "Unnamed Product";
+      const price = parseFloat(currentProduct.Price ?? currentProduct.price) || 0;
+      const image = currentProduct.ImageLink || currentProduct.image || "images/placeholder.jpg";
+
+      // Check if item already exists in cart
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.qty += qty;
+      } else {
+        cart.push({ name, price, image, qty });
+      }
+
+      saveLocalStorage("cart", cart);
+      alert(`${name} (x${qty}) added to cart!`);
+    }
+
+    // Add the current product (with quantity = 1) to the wishlist
+    function addToWishlistFromProduct() {
+      const wishlist = loadLocalStorage("wishlist");
+      if (!currentProduct) {
+        alert("⚠️ No product selected.");
+        return;
+      }
+
+      const name = currentProduct.Name || currentProduct.name || "Unnamed Product";
+      const price = parseFloat(currentProduct.Price ?? currentProduct.price) || 0;
+      const image = currentProduct.ImageLink || currentProduct.image || "images/placeholder.jpg";
+
+      const existing = wishlist.find(item => item.name === name);
+      if (existing) {
+        alert(`${name} is already in your wishlist!`);
+      } else {
+        wishlist.push({ name, price, image, qty: 1 });
+        saveLocalStorage("wishlist", wishlist);
+        alert(`${name} added to wishlist!`);
+      }
+    }
+
+    // DELETE the current product from the backend, then reload index.html
+    async function deleteProduct() {
+      if (!currentProduct) {
+        alert("⚠️ No product selected.");
+        return;
+      }
+
+      // Attempt to find an ID (either 'id' or '_id')
+      const id = currentProduct._id;
+      if (!id) {
+        alert("⚠️ Cannot delete: product ID not found.");
+        return;
+      }
+
+      const confirmDelete = confirm("Are you sure you want to delete this product?");
+      if (!confirmDelete) return;
+
+      try {
+        const response = await fetch(`http://localhost:3000/products/${encodeURIComponent(id)}`, {
+          method: "DELETE"
+        });
+
+        if (!response.ok) {
+          throw new Error(`Server responded with ${response.status}`);
+        }
+
+        alert("✅ Product has been deleted.");
+        // Clear selectedProduct so it doesn't show up on product.html again
+        localStorage.removeItem("selectedProduct");
+        // Redirect back to index.html (which will re-fetch the product list)
+        window.location.href = "index.html";
+      } catch (err) {
+        console.error("Error deleting product:", err);
+        alert("⚠️ Failed to delete product. Please try again.");
+      }
+    }
+
+    // ----------------- COMMENTS LOGIC -----------------
+
+    // Fetch existing comments for the current product
+    function fetchComments() {
+      if (!currentProduct || !currentProduct._id) return;
+
+      const id = currentProduct._id;
+      fetch(`http://localhost:3000/products/${encodeURIComponent(id)}/comments`)
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to fetch comments");
+          return res.json();
+        })
+        .then(comments => displayComments(comments))
+        .catch(err => {
+          console.error("Error fetching comments:", err);
+          document.getElementById("existing-comments").innerHTML = "<p>⚠️ Could not load comments.</p>";
+        });
+    }
+
+    // Render the array of comment objects under #existing-comments
+    function displayComments(comments) {
+      const container = document.getElementById("existing-comments");
+      container.innerHTML = "";
+
+      if (!Array.isArray(comments) || comments.length === 0) {
+        container.innerHTML = "<p>No comments yet.</p>";
+        return;
+      }
+
+      comments.forEach(c => {
+        const div = document.createElement("div");
+        div.classList.add("comment");
+        div.dataset.commentId = c._id;
+
+        // Comment image (if any)
+        let imageHtml = "";
+        if (c.imageUrl) {
+          imageHtml = `<img src="${c.imageUrl}" alt="Comment Image" />`;
+        }
+
+        div.innerHTML = `
+          <p><strong>Rating:</strong> ${c.rating} ⭐</p>
+          <p>${c.comment}</p>
+          ${imageHtml}
+          <p class="timestamp">${new Date(c.timestamp).toLocaleString()}</p>
+          <div class="comment-buttons">
+            <button onclick="startEditComment('${c._id}', '${c.comment.replace(/'/g, "\\'")}', ${c.rating}, '${c.imageUrl || ''}')">✏️ Edit</button>
+            <button onclick="deleteComment('${c._id}', '${c.imageUrl || ''}')">🗑️ Delete</button>
+          </div>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    // Submit a new comment + rating + optional image to the server
+    function submitComment() {
+      if (!currentProduct || !currentProduct._id) {
+        alert("⚠️ No product selected.");
+        return;
+      }
+
+      const textEl = document.getElementById("comment-text");
+      const ratingEl = document.getElementById("comment-rating");
+      const imageEl = document.getElementById("comment-image");
+      const commentText = textEl.value.trim();
+      const ratingValue = parseInt(ratingEl.value);
+      const imageFile = imageEl.files[0] || null;
+
+      if (!commentText) {
+        alert("Please enter a comment.");
+        return;
+      }
+      if (isNaN(ratingValue) || ratingValue < 1 || ratingValue > 5) {
+        alert("Please select a rating between 1 and 5.");
+        return;
+      }
+
+      const id = currentProduct._id;
+      const formData = new FormData();
+      formData.append("comment", commentText);
+      formData.append("rating", ratingValue);
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      fetch(`http://localhost:3000/products/${encodeURIComponent(id)}/comments`, {
+        method: "POST",
+        body: formData
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to submit comment");
+          return res.json();
+        })
+        .then(() => {
+          // Clear form fields and re-fetch comments
+          textEl.value = "";
+          ratingEl.value = "5";
+          imageEl.value = "";
+          fetchComments();
+        })
+        .catch(err => {
+          console.error("Error submitting comment:", err);
+          alert("⚠️ Error submitting comment.");
+        });
+    }
+
+    // Delete a specific comment (and its image file, if present)
+    function deleteComment(commentId, imageUrl) {
+      if (!currentProduct || !currentProduct._id) return;
+      const productId = currentProduct._id;
+
+      const confirmDel = confirm("Are you sure you want to delete this comment?");
+      if (!confirmDel) return;
+
+      fetch(`http://localhost:3000/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
+        method: "DELETE"
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to delete comment");
+          return res.json();
+        })
+        .then(() => {
+          fetchComments();
+        })
+        .catch(err => {
+          console.error("Error deleting comment:", err);
+          alert("⚠️ Error deleting comment.");
+        });
+    }
+
+    // Start editing a comment: replace its div with an inline edit form
+    function startEditComment(commentId, oldText, oldRating, oldImageUrl) {
+      const commentDiv = document.querySelector(`.comment[data-comment-id="${commentId}"]`);
+      if (!commentDiv) return;
+
+      // Build edit form HTML
+      commentDiv.innerHTML = `
+        <div class="edit-form">
+          <label for="edit-text-${commentId}"><strong>Edit Comment:</strong></label>
+          <textarea id="edit-text-${commentId}" rows="3">${oldText}</textarea>
+          <br />
+          <label for="edit-rating-${commentId}"><strong>Rating:</strong></label>
+          <select id="edit-rating-${commentId}">
+            <option value="5"${oldRating === 5 ? " selected" : ""}>5 ⭐</option>
+            <option value="4"${oldRating === 4 ? " selected" : ""}>4 ⭐</option>
+            <option value="3"${oldRating === 3 ? " selected" : ""}>3 ⭐</option>
+            <option value="2"${oldRating === 2 ? " selected" : ""}>2 ⭐</option>
+            <option value="1"${oldRating === 1 ? " selected" : ""}>1 ⭐</option>
+          </select>
+          <br />
+          <label for="edit-image-${commentId}">Replace Image (optional):</label>
+          <input type="file" id="edit-image-${commentId}" accept="image/*" />
+          <br />
+          <button onclick="submitEditComment('${commentId}')">Save</button>
+          <button class="cancel" onclick="cancelEdit('${commentId}', '${oldText.replace(/'/g, "\\'")}', ${oldRating}, '${oldImageUrl || ""}')">Cancel</button>
+        </div>
+      `;
+    }
+
+    // Cancel edit: re-render the single comment row
+    function cancelEdit(commentId, originalText, originalRating, originalImageUrl) {
+      fetchComments(); 
+      // Simplest: just re-fetch all comments. Alternatively, you could re-render just this one.
+    }
+
+    // Submit edited comment to server (possibly with new image)
+    function submitEditComment(commentId) {
+      if (!currentProduct || !currentProduct._id) return;
+      const productId = currentProduct._id;
+
+      const textEl = document.getElementById(`edit-text-${commentId}`);
+      const ratingEl = document.getElementById(`edit-rating-${commentId}`);
+      const imageEl = document.getElementById(`edit-image-${commentId}`);
+      const updatedText = textEl.value.trim();
+      const updatedRating = parseInt(ratingEl.value);
+      const newImageFile = imageEl.files[0] || null;
+
+      if (!updatedText) {
+        alert("Please enter a comment.");
+        return;
+      }
+      if (isNaN(updatedRating) || updatedRating < 1 || updatedRating > 5) {
+        alert("Please select a rating between 1 and 5.");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("comment", updatedText);
+      formData.append("rating", updatedRating);
+      if (newImageFile) {
+        formData.append("image", newImageFile);
+      }
+
+      fetch(`http://localhost:3000/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
+        method: "PUT",
+        body: formData
+      })
+        .then(res => {
+          if (!res.ok) throw new Error("Failed to update comment");
+          return res.json();
+        })
+        .then(() => {
+          fetchComments();
+        })
+        .catch(err => {
+          console.error("Error updating comment:", err);
+          alert("⚠️ Error updating comment.");
+        });
+    }
+    // ----------------------------------------------------
+  </script>
+</body>
+</html>

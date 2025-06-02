@@ -1,0 +1,167 @@
+<!--Code Function: 
+    Login Page - Allows users to login to website
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login - Eco-Cart</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f0f8e2;
+    }
+    .container {
+      text-align: center;
+      background-color: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+      width: 400px;
+    }
+    h2 {
+      margin-bottom: 20px;
+      color: #2e7d32;
+    }
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 18px;
+      border: 1px solid #a5d6a7;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+    .forgot-link {
+      display: block;
+      text-align: right;
+      margin-bottom: 15px;
+      font-size: 14px;
+    }
+    .forgot-link a {
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .forgot-link a:hover {
+      text-decoration: underline;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      font-size: 18px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      background-color: #1b5e20;
+    }
+    p {
+      margin-top: 15px;
+      font-size: 16px;
+    }
+    a {
+      color: #2e7d32;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    .error-message {
+      color: red;
+      margin-top: 10px;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Login to Eco-Cart</h2>
+    <form id="login-form">
+      <input type="email" id="email" placeholder="Email" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <div class="forgot-link">
+        <a href="security.html">Forgot password?</a>
+      </div>
+      <button type="submit">Login</button>
+      <div class="error-message" id="errorMsg"></div>
+    </form>
+    <p>Don't have an account? <a href="register.html">Register here</a></p>
+  </div>
+
+  <script>
+    // Support file:// and http://localhost:3000
+    const baseURL = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
+
+    let failedAttempts = 0;
+    const maxAttempts = 3;
+    const errorMsg = document.getElementById('errorMsg');
+
+    document.getElementById('login-form').addEventListener('submit', async function (e) {
+      e.preventDefault();
+      errorMsg.textContent = '';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const response = await fetch(baseURL + '/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password }),
+        });
+
+        if (!response.ok) {
+          failedAttempts++;
+          if (failedAttempts >= maxAttempts) {
+            alert('Too many failed attempts. Redirecting to reset password.');
+            window.location.href = 'security.html';
+            return;
+          }
+          errorMsg.textContent = `Login failed (attempt ${failedAttempts} of ${maxAttempts}).`;
+          return;
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.user) {
+          localStorage.setItem('loggedInUser', JSON.stringify(data.user));
+          alert('Login successful! 🚀');
+          window.location.href = 'profile.html';
+        } else {
+          failedAttempts++;
+          if (failedAttempts >= maxAttempts) {
+            alert('Too many failed attempts. Redirecting to reset password.');
+            window.location.href = 'security.html';
+            return;
+          }
+          errorMsg.textContent = `Login failed (attempt ${failedAttempts} of ${maxAttempts}).`;
+        }
+      } catch (error) {
+        console.error('⚠️ Login error:', error);
+        failedAttempts++;
+        if (failedAttempts >= maxAttempts) {
+          alert('Too many failed attempts. Redirecting to reset password.');
+          window.location.href = 'security.html';
+          return;
+        }
+        errorMsg.textContent = `Server error (attempt ${failedAttempts} of ${maxAttempts}).`;
+      }
+    });
+  </script>
+</body>
+</html>

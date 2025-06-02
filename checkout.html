@@ -1,0 +1,402 @@
+<!--Code Function: 
+    Checkout Page - Capture shipping & payment details, order confirmation
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout - Eco-Cart</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 750px;
+      margin: 40px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      color: #2e7d32;
+      text-align: center;
+      font-size: 26px;
+      margin-bottom: 25px;
+    }
+
+    .summary-box {
+      background: #e8f5e9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+    }
+
+    .summary-box h3 {
+      color: #1b5e20;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      padding: 10px 0;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    form > div {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: bold;
+      color: #2e7d32;
+      margin-bottom: 5px;
+    }
+
+    input {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 6px;
+      border: 1px solid #bbb;
+      background: #fafafa;
+    }
+
+    .submit-btn {
+      grid-column: span 2;
+      padding: 15px;
+      background: #2e7d32;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+    }
+
+    .submit-btn:hover {
+      background: #1b5e20;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    #card-error {
+      color: red;
+      font-size: 13px;
+      display: none;
+    }
+
+    #invoice {
+      margin-top: 40px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+    }
+
+    #invoice h3 {
+      color: #2e7d32;
+    }
+
+    #redirect-home-btn {
+      display: none;
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
+      background: #2e7d32;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.12);
+      transition: 0.3s;
+    }
+
+    #redirect-home-btn:hover {
+      background: #1b5e20;
+      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.18);
+    }
+
+    .toast {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #4caf50;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 9999;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        width: 90%;
+        padding: 20px;
+      }
+
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      .submit-btn {
+        grid-column: span 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Checkout</h2>
+
+    <!-- 🧾 Order Summary -->
+    <div class="summary-box" id="order-summary">
+      <h3>Your Order</h3>
+      <ul id="summary-items"></ul>
+      <strong>Total: <span id="summary-total">$0.00</span></strong>
+    </div>
+
+    <!-- ✅ Checkout Form -->
+    <form id="checkout-form">
+      <div>
+        <label for="full-name">Full Name</label>
+        <input type="text" id="full-name" required />
+      </div>
+      <div>
+        <label for="address">Address</label>
+        <input type="text" id="address" required />
+      </div>
+      <div>
+        <label for="city">City</label>
+        <input type="text" id="city" required />
+      </div>
+      <div>
+        <label for="postal-code">Postal Code</label>
+        <input type="text" id="postal-code" required pattern="\d{4,10}" />
+      </div>
+      <div>
+        <label for="card-number">Debit Card Number</label>
+        <input type="text" id="card-number" required pattern="\d{16}" maxlength="16" />
+        <p class="error" id="card-error">Only debit cards are allowed (starts with 4).</p>
+      </div>
+      <div>
+        <label for="expiry">Expiry Date (MM/YY)</label>
+        <input type="text" id="expiry" required pattern="(0[1-9]|1[0-2])/\d{2}" />
+      </div>
+      <div>
+        <label for="cvv">CVV</label>
+        <input type="text" id="cvv" required pattern="\d{3}" maxlength="3" />
+      </div>
+
+      <button type="submit" class="submit-btn">Place Order</button>
+    </form>
+
+    <!-- 📄 Invoice Section (Hidden) -->
+    <div id="invoice" style="display: none;">
+      <h3>Invoice Preview</h3>
+      <div id="invoice-content">
+        <p><strong>Eco-Cart</strong></p>
+        <p><strong>Name:</strong> <span id="inv-name"></span></p>
+        <p><strong>Address:</strong> <span id="inv-address"></span></p>
+        <p><strong>Order Details:</strong></p>
+        <ul id="inv-items"></ul>
+        <p><strong>Total:</strong> <span id="inv-total"></span></p>
+        <p>Thank you for shopping with us 💚</p>
+      </div>
+
+      <button onclick="window.print()" class="submit-btn" style="margin-top: 15px;">🖨 Print Invoice</button>
+      <button onclick="downloadPDF()" class="submit-btn" style="margin-top: 10px; background: #388e3c;">⬇️ Download PDF</button>
+
+      <button id="redirect-home-btn" onclick="redirectHome()">🏠 Back to Home</button>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">📧 Order confirmed. Confirmation email sent!</div>
+
+  <!-- jsPDF CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <script>
+    const summaryItems = document.getElementById("summary-items");
+    const summaryTotal = document.getElementById("summary-total");
+    const toast = document.getElementById("toast");
+    const redirectBtn = document.getElementById("redirect-home-btn");
+
+    function loadSummary() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      let total = 0;
+
+      if (cart.length === 0) {
+        summaryItems.innerHTML = "<li>Your cart is empty.</li>";
+        return;
+      }
+
+      cart.forEach(item => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+
+        const li = document.createElement("li");
+        li.innerHTML = `<span>${item.name} × ${item.qty}</span><span>$${subtotal.toFixed(2)}</span>`;
+        summaryItems.appendChild(li);
+      });
+
+      summaryTotal.textContent = `$${total.toFixed(2)}`;
+    }
+
+    document.getElementById("checkout-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const cardNumber = document.getElementById("card-number").value.trim();
+      const cardError = document.getElementById("card-error");
+
+      if (!cardNumber.startsWith("4")) {
+        cardError.style.display = "block";
+        return;
+      }
+
+      cardError.style.display = "none";
+
+      fillInvoice();
+      showToast("📧 Order confirmed. Confirmation email sent!");
+
+      const orderData = collectOrderData();
+      createOrderInDB(orderData); // 🔄 Save to MongoDB
+
+      localStorage.removeItem("cart");
+
+      // Show invoice and redirect button
+      setTimeout(() => {
+        document.getElementById("invoice").style.display = "block";
+        redirectBtn.style.display = "block";
+      }, 500);
+    });
+
+    function fillInvoice() {
+      const name = document.getElementById("full-name").value;
+      const address = document.getElementById("address").value;
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      document.getElementById("inv-name").textContent = name;
+      document.getElementById("inv-address").textContent = address;
+
+      const invItems = document.getElementById("inv-items");
+      invItems.innerHTML = "";
+      let total = 0;
+
+      cart.forEach(item => {
+        const subtotal = item.price * item.qty;
+        total += subtotal;
+        const li = document.createElement("li");
+        li.textContent = `${item.name} × ${item.qty} - $${subtotal.toFixed(2)}`;
+        invItems.appendChild(li);
+      });
+
+      document.getElementById("inv-total").textContent = `$${total.toFixed(2)}`;
+    }
+
+    function collectOrderData() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const fullName = document.getElementById("full-name").value;
+      const address = document.getElementById("address").value;
+      const city = document.getElementById("city").value;
+      const postalCode = document.getElementById("postal-code").value;
+      const timestamp = new Date().toISOString();
+      const total = parseFloat(summaryTotal.textContent.replace("$", ""));
+
+      return {
+        fullName,
+        address,
+        city,
+        postalCode,
+        total,
+        timestamp,
+        cart,                  // raw cart array (name/qty/price)
+        orderedProducts: cart  // explicitly send ordered products as well
+      };
+    }
+
+    async function createOrderInDB(orderData) {
+      try {
+        const response = await fetch("/api/orders", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(orderData)
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to save order");
+        }
+
+        console.log("Order saved successfully to DB");
+      } catch (error) {
+        console.error("❌ Order saving error:", error);
+      }
+    }
+
+    function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      doc.setFontSize(14);
+      doc.text("Eco-Cart Invoice", 20, 20);
+
+      const name = document.getElementById("inv-name").textContent;
+      const address = document.getElementById("inv-address").textContent;
+      const items = [...document.querySelectorAll("#inv-items li")].map(li => li.textContent);
+      const total = document.getElementById("inv-total").textContent;
+
+      doc.text(`Name: ${name}`, 20, 30);
+      doc.text(`Address: ${address}`, 20, 40);
+      doc.text("Items:", 20, 50);
+      items.forEach((item, index) => doc.text(`- ${item}`, 25, 60 + index * 10));
+      doc.text(`Total: ${total}`, 20, 70 + items.length * 10);
+
+      doc.save("EcoCart_Invoice.pdf");
+    }
+
+    function showToast(message) {
+      toast.textContent = message;
+      toast.style.display = "block";
+      setTimeout(() => {
+        toast.style.display = "none";
+      }, 2500);
+    }
+
+    function redirectHome() {
+      window.location.href = "index.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", loadSummary);
+  </script>
+</body>
+</html>

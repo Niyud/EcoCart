@@ -1,0 +1,346 @@
+<!--Code Function: 
+    User Profile Page - Allows users to view/edit their profile and order history
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Profile - Eco-Cart</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #e8f5e9;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background-color: #fff;
+      padding: 40px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 500px;
+      text-align: center;
+    }
+
+    h2 {
+      margin-bottom: 20px;
+      color: #2e7d32;
+    }
+
+    .profile-pic-wrapper {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 20px;
+    }
+
+    .profile-pic-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid #2e7d32;
+    }
+
+    .profile-pic-wrapper label {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: #4caf50;
+      color: white;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+      border: 2px solid #fff;
+    }
+
+    .profile-pic-wrapper input[type="file"] {
+      display: none;
+    }
+
+    input[type="text"],
+    input[type="email"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 8px 0;
+      font-size: 15px;
+      border: 1px solid #a5d6a7;
+      border-radius: 6px;
+      box-sizing: border-box;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .gender-group {
+      display: flex;
+      justify-content: space-around;
+      margin: 10px 0;
+    }
+
+    .gender-group label {
+      font-size: 14px;
+      color: #333;
+    }
+
+    .change-password {
+      text-align: right;
+      margin-top: 10px;
+    }
+
+    .change-password a {
+      color: #1b5e20;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .change-password a:hover {
+      text-decoration: underline;
+    }
+
+    
+
+    .go-shop {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #43a047;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .go-shop:hover {
+      background-color: #2e7d32;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+
+    button:hover {
+      background-color: #1b5e20;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 15px;
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>My Profile</h2>
+    <div class="profile-pic-wrapper">
+      <img id="profile-pic" src="images/placeholder-profile.png" alt="Profile Picture" />
+      <label for="profile-image-upload" title="Change Picture">✎</label>
+      <input type="file" id="profile-image-upload" accept="image/*" />
+    </div>
+
+    <form id="profile-form">
+      <input type="text" id="name" placeholder="Name" required />
+      <input type="text" id="username" placeholder="Username" required />
+      <select id="pronouns" required>
+        <option value="">Select Pronouns</option>
+        <option value="He/Him">He/Him</option>
+        <option value="She/Her">She/Her</option>
+        <option value="They/Them">They/Them</option>
+        <option value="Other">Other</option>
+      </select>
+      <textarea id="bio" placeholder="Bio (max 150 chars)" maxlength="150"></textarea>
+      <input type="text" id="links" placeholder="Links (comma-separated URLs)" />
+      <div class="gender-group">
+        <label><input type="radio" name="gender" value="Male" /> Male</label>
+        <label><input type="radio" name="gender" value="Female" /> Female</label>
+        <label><input type="radio" name="gender" value="Other" /> Other</label>
+      </div>
+      <input type="tel" id="phone" placeholder="Phone" />
+      <input type="text" id="address" placeholder="Address" />
+      <input type="email" id="email" placeholder="Email" readonly />
+      <div class="change-password">
+        <a href="security.html">Change Password</a>
+      </div>
+      <button type="submit">Update Profile</button>
+      <div class="status" id="statusMsg"></div>
+    </form>
+
+    <button onclick="logout()" style="
+  background-color: #c62828;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+">
+  Logout
+</button>
+
+<script>
+  function logout() {
+    if (confirm("Are you sure you want to log out?")) {
+      localStorage.removeItem("loggedInUser");
+      window.location.href = "index.html";
+    }
+  }
+</script>
+
+
+    <!-- Go to Shop button: set the “hasVisitedEcoCart” flag, then go to index.html -->
+    <button 
+      class="go-shop" 
+      onclick="sessionStorage.setItem('hasVisitedEcoCart','true'); window.location.href='index.html';"
+    >
+      Go to Shop
+    </button>
+  </div>
+
+  <script>
+    const statusMsg = document.getElementById("statusMsg");
+    const userData = JSON.parse(localStorage.getItem("loggedInUser"));
+
+    if (!userData || !userData.email) {
+      alert("You are not logged in. Please login first.");
+      window.location.href = "login.html";
+    } else {
+      // Pre-fill form fields
+      document.getElementById("name").value = userData.name || "";
+      document.getElementById("username").value = userData.username || "";
+      document.getElementById("pronouns").value = userData.pronouns || "";
+      document.getElementById("bio").value = userData.bio || "";
+      document.getElementById("links").value = userData.links || "";
+      if (userData.gender) {
+        const genderRadios = document.getElementsByName("gender");
+        genderRadios.forEach(r => {
+          if (r.value === userData.gender) r.checked = true;
+        });
+      }
+      document.getElementById("phone").value = userData.phone || "";
+      document.getElementById("address").value = userData.address || "";
+      document.getElementById("email").value = userData.email || "";
+
+      // Display existing profile image if any
+      if (userData.profileImageUrl) {
+        document.getElementById("profile-pic").src = userData.profileImageUrl;
+      }
+    }
+
+    // Preview new profile image
+    document.getElementById("profile-image-upload").addEventListener("change", function() {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        document.getElementById("profile-pic").src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    document.getElementById("profile-form").addEventListener("submit", async function(e) {
+      e.preventDefault();
+      statusMsg.textContent = "";
+      statusMsg.style.color = "red";
+
+      const name = document.getElementById("name").value.trim();
+      const username = document.getElementById("username").value.trim();
+      const pronouns = document.getElementById("pronouns").value;
+      const bio = document.getElementById("bio").value.trim();
+      const links = document.getElementById("links").value.trim();
+      const genderRadios = document.getElementsByName("gender");
+      let gender = "";
+      genderRadios.forEach(r => {
+        if (r.checked) gender = r.value;
+      });
+      const phone = document.getElementById("phone").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const imageFile = document.getElementById("profile-image-upload").files[0] || null;
+
+      if (!name || !username || !pronouns) {
+        statusMsg.textContent = "Name, Username, and Pronouns are required.";
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("name", name);
+      formData.append("username", username);
+      formData.append("pronouns", pronouns);
+      formData.append("bio", bio);
+      formData.append("links", links);
+      formData.append("gender", gender);
+      formData.append("phone", phone);
+      formData.append("address", address);
+      if (imageFile) {
+        formData.append("profileImage", imageFile);
+      }
+
+      try {
+        const response = await fetch("/update_profile", {
+          method: "POST",
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (response.ok && result.success) {
+          // Update localStorage
+          const updatedUser = {
+            email,
+            name,
+            username,
+            pronouns,
+            bio,
+            links,
+            gender,
+            phone,
+            address,
+            profileImageUrl: result.profileImageUrl || userData.profileImageUrl || ""
+          };
+          localStorage.setItem("loggedInUser", JSON.stringify(updatedUser));
+
+          statusMsg.style.color = "green";
+          statusMsg.textContent = "Profile updated successfully!";
+        } else {
+          statusMsg.textContent = result.message || "Update failed";
+        }
+      } catch (error) {
+        console.error("Update error:", error);
+        statusMsg.textContent = "Server error. Please try again later.";
+      }
+    });
+  </script>
+</body>
+</html>

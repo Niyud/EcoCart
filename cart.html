@@ -1,0 +1,310 @@
+<!--Code Function:
+    Redesigned Shopping Cart Page with full UX enhancement
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Eco-Cart | My Shopping Cart</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f1f8f4;
+      color: #2e7d32;
+    }
+
+    .cart-container {
+      max-width: 1000px;
+      margin: 40px auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 15px 0;
+      border-bottom: 1px solid #ddd;
+      flex-wrap: wrap;
+    }
+
+    .cart-item img {
+      width: 80px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-right: 20px;
+    }
+
+    .item-details {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .item-info {
+      flex: 1;
+    }
+
+    .item-info h3 {
+      margin: 0 0 5px;
+      font-size: 18px;
+    }
+
+    .item-info p {
+      margin: 0;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .item-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .item-actions input[type="number"] {
+      width: 60px;
+      padding: 6px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    .item-actions button {
+      background-color: #e53935;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .item-actions button:hover {
+      background-color: #c62828;
+    }
+
+    .cart-summary {
+      text-align: right;
+      margin-top: 30px;
+    }
+
+    .cart-summary h3 {
+      font-size: 24px;
+    }
+
+    .checkout-btn {
+      margin-top: 20px;
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      background-color: #2e7d32;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .checkout-btn:hover {
+      background-color: #1b5e20;
+    }
+
+    #empty-cart {
+      text-align: center;
+      color: #888;
+      font-size: 18px;
+      padding: 60px 0;
+      display: none;
+    }
+
+    .clear-cart-btn {
+      margin-top: 10px;
+      width: 200px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #e53935;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .clear-cart-btn:hover {
+      background-color: #c62828;
+    }
+
+    .go-shop-btn {
+      margin-top: 20px;
+      display: inline-block;
+      padding: 12px 24px;
+      font-size: 16px;
+      background-color: #43a047;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .go-shop-btn:hover {
+      background-color: #2e7d32;
+    }
+
+    @media (max-width: 768px) {
+      .item-details {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .item-actions {
+        justify-content: flex-start;
+      }
+
+      .clear-cart-btn, .go-shop-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="cart-container">
+    <h1>Your Shopping Cart 🛒</h1>
+
+    <div id="cart-items"></div>
+
+    <div id="empty-cart">Your cart is currently empty.</div>
+
+    <div class="cart-summary" id="cart-summary" style="display: none;">
+      <h3>Total: <span id="cart-total">$0.00</span></h3>
+      <button class="checkout-btn" onclick="window.location.href='checkout.html'">Proceed to Checkout</button>
+      <!-- Clear Cart Button -->
+      <br />
+      <button class="clear-cart-btn" onclick="clearCart()">Clear Cart</button>
+    </div>
+
+    <!-- Go to Shop Button (redirect directly to index.html) -->
+    <div style="text-align: center;">
+      <button class="go-shop-btn" onclick="sessionStorage.setItem('hasVisitedEcoCart','true'); window.location.href='index.html';">
+        Continue Shopping
+      </button>
+    </div>
+  </div>
+
+  <script>
+    function loadCart() {
+      let storedCart = localStorage.getItem("cart");
+      if (!storedCart) return [];
+      try {
+        const parsedCart = JSON.parse(storedCart);
+        if (!Array.isArray(parsedCart) || parsedCart.length === 0) return [];
+        return parsedCart;
+      } catch {
+        return [];
+      }
+    }
+
+    function saveCart(cart) {
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function formatCurrency(value) {
+      return `$${value.toFixed(2)}`;
+    }
+
+    function updateCart() {
+      const cart = loadCart();
+      const cartItemsDiv = document.getElementById("cart-items");
+      const emptyCartDiv = document.getElementById("empty-cart");
+      const summaryDiv = document.getElementById("cart-summary");
+      const totalPriceSpan = document.getElementById("cart-total");
+
+      cartItemsDiv.innerHTML = "";
+
+      if (cart.length === 0) {
+        emptyCartDiv.style.display = "block";
+        summaryDiv.style.display = "none";
+        return;
+      } else {
+        emptyCartDiv.style.display = "none";
+        summaryDiv.style.display = "block";
+      }
+
+      let total = 0;
+
+      cart.forEach((item, index) => {
+        let qty = parseInt(item.qty);
+        if (isNaN(qty) || qty < 1) qty = 1;
+        item.qty = qty;
+
+        const price = parseFloat(item.price);
+        const subtotal = price * qty;
+
+        total += subtotal;
+
+        const cartItem = document.createElement("div");
+        cartItem.className = "cart-item";
+        cartItem.innerHTML = `
+          <div class="item-details">
+            <img src="${item.image}" alt="${item.name}" />
+            <div class="item-info">
+              <h3>${item.name}</h3>
+              <p>Price: ${formatCurrency(price)}</p>
+              <p>Subtotal: ${formatCurrency(subtotal)}</p>
+            </div>
+          </div>
+          <div class="item-actions">
+            <input type="number" min="1" value="${qty}" onchange="changeQty(${index}, this.value)" />
+            <button onclick="removeItem(${index})">Remove</button>
+          </div>
+        `;
+        cartItemsDiv.appendChild(cartItem);
+      });
+
+      saveCart(cart);
+      totalPriceSpan.textContent = formatCurrency(total);
+    }
+
+    function removeItem(index) {
+      let cart = loadCart();
+      cart.splice(index, 1);
+      saveCart(cart);
+      updateCart();
+    }
+
+    function changeQty(index, qty) {
+      let cart = loadCart();
+      let newQty = parseInt(qty);
+      if (isNaN(newQty) || newQty < 1) {
+        alert("Quantity must be at least 1.");
+        updateCart();
+        return;
+      }
+      cart[index].qty = newQty;
+      saveCart(cart);
+      updateCart();
+    }
+
+    function clearCart() {
+      if (confirm("Are you sure you want to clear your cart?")) {
+        localStorage.removeItem("cart");
+        updateCart();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", updateCart);
+  </script>
+</body>
+</html>

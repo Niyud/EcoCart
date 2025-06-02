@@ -1,0 +1,122 @@
+<!--Code Function: 
+    Help Page - Allows users to view Help Center
+    Date: 20/05/2025, created by: Nicholas, Student ID: 11890355 
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - Eco-Cart</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f1f8f4;
+            color: #2e7d32;
+            line-height: 1.6;
+            margin: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #1b5e20;
+            text-align: center;
+        }
+
+        .faq {
+            margin-top: 20px;
+        }
+
+        .question {
+            background-color: #a5d6a7;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .answer {
+            display: none;
+            padding: 10px;
+            background-color: #e8f5e9;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .customer-service {
+            background-color: #a5d6a7;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .customer-service a {
+            color: #1b5e20;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .customer-service p {
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Help Center</h1>
+
+        <h2>Hot Questions</h2>
+        <div class="faq">
+            <div class="question" onclick="toggleAnswer(0)">How do I track my order?</div>
+            <div class="answer">You can track your order by visiting your **Order History** page and clicking on the tracking number.</div>
+
+            <div class="question" onclick="toggleAnswer(1)">What payment methods do you accept?</div>
+            <div class="answer">We accept credit/debit cards, PayPal, and Eco-Pay for secure transactions.</div>
+
+            <div class="question" onclick="toggleAnswer(2)">Can I return a product?</div>
+            <div class="answer">Yes! You can return unused products within 30 days of delivery by following the **Return Policy** on your account page.</div>
+
+            <div class="question" onclick="toggleAnswer(3)">Do you offer discounts for bulk purchases?</div>
+            <div class="answer">Yes, we offer special discounts for bulk purchases. Contact us for more details.</div>
+
+            <div class="question" onclick="toggleAnswer(4)">How can I contact customer support?</div>
+            <div class="answer">You can reach our support team via **live chat**, email, or free internet phone using the details below.</div>
+        </div>
+
+        <h2>Need Customer Service Assistance?</h2>
+        <div class="customer-service">
+            <p><strong>Self-Service Center:</strong> Visit our <a href="support.html">Support Page</a> for troubleshooting guides and FAQs.</p>
+            <p><strong>Call Customer Support via Free Internet Phone:</strong></p>
+            <p>Phone: +886-976-333-889</p>
+            <p>Available: Monday - Friday, 9 AM - 6 PM (UTC)</p>
+            <button 
+      class="go-shop" 
+      onclick="sessionStorage.setItem('hasVisitedEcoCart','true'); window.location.href='index.html';"
+    >
+      Go to Shop
+    </button>
+        </div>
+    </div>
+
+    <script>
+        function toggleAnswer(index) {
+            let answers = document.querySelectorAll(".answer");
+            answers[index].style.display = answers[index].style.display === "block" ? "none" : "block";
+        }
+    </script>
+
+</body>
+</html>
