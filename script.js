@@ -7,7 +7,8 @@ let products = [];
 // Fetch products from the backend API
 async function fetchProducts() {
   try {
-    const response = await fetch("http://localhost:3000/products");
+    // ▶︎ Changed from hard-coded localhost to a relative path
+    const response = await fetch("/products");
     if (!response.ok) throw new Error("❌ Failed to fetch data");
 
     products = await response.json();
