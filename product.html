@@ -456,9 +456,10 @@
       if (!confirmDelete) return;
 
       try {
-        const response = await fetch(`http://localhost:3000/products/${encodeURIComponent(id)}`, {
-          method: "DELETE"
-        });
+        const response = await fetch(
+          `/products/${encodeURIComponent(id)}`,
+          { method: "DELETE" }
+        );
 
         if (!response.ok) {
           throw new Error(`Server responded with ${response.status}`);
@@ -482,7 +483,7 @@
       if (!currentProduct || !currentProduct._id) return;
 
       const id = currentProduct._id;
-      fetch(`/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`)
+      fetch(`/products/${encodeURIComponent(id)}/comments`)
         .then(res => {
           if (!res.ok) throw new Error("Failed to fetch comments");
           return res.json();
@@ -490,7 +491,8 @@
         .then(comments => displayComments(comments))
         .catch(err => {
           console.error("Error fetching comments:", err);
-          document.getElementById("existing-comments").innerHTML = "<p>⚠️ Could not load comments.</p>";
+          document.getElementById("existing-comments").innerHTML =
+            "<p>⚠️ Could not load comments.</p>";
         });
     }
 
@@ -515,13 +517,16 @@
           imageHtml = `<img src="${c.imageUrl}" alt="Comment Image" />`;
         }
 
+        // Escape single quotation marks in c.comment
+        const safeCommentText = c.comment.replace(/'/g, "\\'");
+
         div.innerHTML = `
           <p><strong>Rating:</strong> ${c.rating} ⭐</p>
           <p>${c.comment}</p>
           ${imageHtml}
           <p class="timestamp">${new Date(c.timestamp).toLocaleString()}</p>
           <div class="comment-buttons">
-            <button onclick="startEditComment('${c._id}', '${c.comment.replace(/'/g, "\\'")}', ${c.rating}, '${c.imageUrl || ''}')">✏️ Edit</button>
+            <button onclick="startEditComment('${c._id}', '${safeCommentText}', ${c.rating}, '${c.imageUrl || ''}')">✏️ Edit</button>
             <button onclick="deleteComment('${c._id}', '${c.imageUrl || ''}')">🗑️ Delete</button>
           </div>
         `;
@@ -560,7 +565,7 @@
         formData.append("image", imageFile);
       }
 
-      fetch(`/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
+      fetch(`/products/${encodeURIComponent(id)}/comments`, {
         method: "POST",
         body: formData
       })
@@ -629,15 +634,14 @@
           <input type="file" id="edit-image-${commentId}" accept="image/*" />
           <br />
           <button onclick="submitEditComment('${commentId}')">Save</button>
-          <button class="cancel" onclick="cancelEdit('${commentId}', '${oldText.replace(/'/g, "\\'")}', ${oldRating}, '${oldImageUrl || ""}')">Cancel</button>
+          <button class="cancel" onclick="cancelEdit('${commentId}', '${oldText}', ${oldRating}, '${oldImageUrl || ""}')">Cancel</button>
         </div>
       `;
     }
 
-    // Cancel edit: re-render the single comment row
+    // Cancel edit: simply re-fetch all comments
     function cancelEdit(commentId, originalText, originalRating, originalImageUrl) {
-      fetchComments(); 
-      // Simplest: just re-fetch all comments. Alternatively, you could re-render just this one.
+      fetchComments();
     }
 
     // Submit edited comment to server (possibly with new image)
