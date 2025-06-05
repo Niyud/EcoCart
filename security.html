@@ -77,7 +77,14 @@
     .status {
       margin-top: 15px;
       font-size: 15px;
+    }
+
+    .status.error {
       color: red;
+    }
+
+    .status.success {
+      color: green;
     }
   </style>
 </head>
@@ -96,13 +103,16 @@
         <input type="password" id="confirm-password" placeholder="Confirm New Password" required />
         <span class="toggle-password" id="toggle-confirm">👁️</span>
       </div>
-      <button type="submit">Update Password</button>
+      <button type="submit">Confirm Change New Password</button>
       <div class="status" id="statusMsg"></div>
     </form>
   </div>
 
   <script>
     const statusMsg = document.getElementById("statusMsg");
+    const emailField = document.getElementById("email");
+    const newPasswordField = document.getElementById("new-password");
+    const confirmPasswordField = document.getElementById("confirm-password");
 
     function setupToggle(toggleId, inputId) {
       const toggle = document.getElementById(toggleId);
@@ -112,26 +122,52 @@
       });
     }
 
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function liveValidation() {
+      const email = emailField.value.trim();
+      const newPassword = newPasswordField.value;
+      const confirmPassword = confirmPasswordField.value;
+
+      if (!validateEmail(email)) {
+        statusMsg.textContent = "Enter a valid email address.";
+        statusMsg.className = "status error";
+        return false;
+      }
+
+      if (newPassword.length < 6) {
+        statusMsg.textContent = "Password must be at least 6 characters.";
+        statusMsg.className = "status error";
+        return false;
+      }
+
+      if (newPassword !== confirmPassword) {
+        statusMsg.textContent = "Passwords do not match.";
+        statusMsg.className = "status error";
+        return false;
+      }
+
+      statusMsg.textContent = "All fields look good.";
+      statusMsg.className = "status success";
+      return true;
+    }
+
+    emailField.addEventListener("input", liveValidation);
+    newPasswordField.addEventListener("input", liveValidation);
+    confirmPasswordField.addEventListener("input", liveValidation);
+
     setupToggle("toggle-new", "new-password");
     setupToggle("toggle-confirm", "confirm-password");
 
     document.getElementById("security-form").addEventListener("submit", async function(e) {
       e.preventDefault();
-      statusMsg.textContent = "";
-      statusMsg.style.color = "red";
+      if (!liveValidation()) return;
 
-      const email = document.getElementById("email").value.trim();
-      const newPassword = document.getElementById("new-password").value;
-      const confirmPassword = document.getElementById("confirm-password").value;
-
-      if (newPassword.length < 6) {
-        statusMsg.textContent = "New password must be at least 6 characters.";
-        return;
-      }
-      if (newPassword !== confirmPassword) {
-        statusMsg.textContent = "New password and confirmation do not match.";
-        return;
-      }
+      const email = emailField.value.trim();
+      const newPassword = newPasswordField.value;
 
       try {
         const response = await fetch("/change_password", {
@@ -141,7 +177,7 @@
           },
           body: JSON.stringify({
             email,
-            currentPassword: "skip", // Placeholder, server just checks email now
+            currentPassword: "skip",
             newPassword
           })
         });
@@ -149,16 +185,18 @@
         const result = await response.json();
 
         if (response.ok && result.success) {
-          statusMsg.style.color = "green";
-          statusMsg.textContent = "Password updated successfully!";
+          statusMsg.className = "status success";
+          statusMsg.textContent = "Password updated successfully! Redirecting to login...";
           setTimeout(() => {
-            window.location.href = "profile.html";
+            window.location.href = "login.html";
           }, 1500);
         } else {
-          statusMsg.textContent = result.message || "Password change failed";
+          statusMsg.className = "status error";
+          statusMsg.textContent = result.message || "Password change failed.";
         }
       } catch (error) {
         console.error("Password change error:", error);
+        statusMsg.className = "status error";
         statusMsg.textContent = "Server error. Please try again later.";
       }
     });
