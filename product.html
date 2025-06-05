@@ -560,7 +560,7 @@
         formData.append("image", imageFile);
       }
 
-      fetch(`http://localhost:3000/products/${encodeURIComponent(id)}/comments`, {
+      fetch(`/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
         method: "POST",
         body: formData
       })
@@ -589,7 +589,7 @@
       const confirmDel = confirm("Are you sure you want to delete this comment?");
       if (!confirmDel) return;
 
-      fetch(`http://localhost:3000/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
+      fetch(`/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
         method: "DELETE"
       })
         .then(res => {
@@ -668,7 +668,7 @@
         formData.append("image", newImageFile);
       }
 
-      fetch(`http://localhost:3000/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
+      fetch(`/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`, {
         method: "PUT",
         body: formData
       })
