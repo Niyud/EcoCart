@@ -482,7 +482,7 @@
       if (!currentProduct || !currentProduct._id) return;
 
       const id = currentProduct._id;
-      fetch(`http://localhost:3000/products/${encodeURIComponent(id)}/comments`)
+      fetch(`/products/${encodeURIComponent(productId)}/comments/${encodeURIComponent(commentId)}`)
         .then(res => {
           if (!res.ok) throw new Error("Failed to fetch comments");
           return res.json();
