@@ -11,7 +11,7 @@ const connectToDatabase = require('./db');
 // ADDED: Import Groq for AI proxy (use .default to get the constructor)
 // ──────────────────────────────────────────────────────────────────────────
 const Groq = require('groq-sdk').default;
-const GROQ_API_KEY = "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";
+const GROQ_API_KEY = process.env.GROQ_API_KEY;
 const groqClient = new Groq({ apiKey: GROQ_API_KEY });
 // ──────────────────────────────────────────────────────────────────────────
 
